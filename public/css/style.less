@@ -1,3 +1,9 @@
+@import "bootstrap.css";
+@import "fontawesome.css";
+@import "hamburger.css";
+
+@stars: #FFC069;
+
 body, html {
   background-color: #3B3C3F;
   font-size: 16px;
@@ -7,33 +13,36 @@ body, html {
   overflow-x: hidden;
 }
 
-
-.stars {
-
-  margin-left:0.5rem;
-
+/* User Badge */
+.userinfo {
+  display: inline;
+  position: relative;
+  top: -2px;
+  max-width: 200px;
+  color: #9B9D9E;
+  padding: 6px 12px 6px 12px;
   cursor: pointer;
-
-  .star {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    letter-spacing: -2px;
-  }
-
+  background-color: #212529;
+  border-radius: 20px;
 }
 
-@stars: #FFC069; // #F58840;
-
-.voted {
-  .star {
-    color: @stars !important;
-  }
+/* Filter */
+.filter {
+  margin-top: -54px;
+  padding-bottom: 16px;
 }
 
+/* Responsiv */
+@media (max-width: 768px) {
+  h1.responsiv {
+    padding-top: 50px;
+  }
+}
 .w-49 {
   width: 48%;
 }
 
+/* Elements & Animations */
 #addElement {
   img {
     -webkit-transition: 0.2s -webkit-filter linear;
@@ -88,7 +97,6 @@ body, html {
 }
 
 
-
 .hover-title {
   //left: 12px;
   transition: 0.2s background-color, padding-left 0.2s;
@@ -109,6 +117,7 @@ body, html {
   padding-bottom: 6px;
   padding-top: 6px;
   color: white;
+
   li {
     list-style: none;
     width: 100%;
@@ -133,6 +142,22 @@ body, html {
   padding-left: 15px;
   padding-bottom: 6px;
   padding-top: 6px;
+}
+
+.brand-fa {
+  font-size: 33px;
+  padding-bottom: 10px;
+  margin-right: 4px;
+}
+
+.linie {
+  color: #d5d5d7 !important;
+  width: 100%;
+  height: 5px;
+  margin-top: 12px;
+  margin-left: 20px;
+  z-index: 0;
+  position: absolute;
 }
 
 ::selection {
@@ -160,6 +185,23 @@ body, html {
   transition: 0.2s background-color;
 }
 
+
+/* Bewertung */
+.stars {
+  margin-left: 0.5rem;
+  cursor: pointer;
+  .star {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    letter-spacing: -2px;
+  }
+}
+.voted {
+  .star {
+    color: @stars !important;
+  }
+}
+
 .like-wrapper {
   position: absolute;
   background-color: rgba(0, 0, 0, 40%);
@@ -178,24 +220,25 @@ body, html {
 
 }
 
-
-.user{
+.user {
   transition: font-size 0.3s, margin-left 0.25s;
-  font-size: 12px!important;
+  font-size: 12px !important;
   margin-left: 6px;
+
   i {
     margin-right: 8px;
     transition: font-size 0.3s;
-    font-size: 12px!important;
+    font-size: 12px !important;
   }
 }
 
-.user:hover{
+.user:hover {
   margin-left: 4px;
-  font-size: 13px!important;
+  font-size: 13px !important;
   transition: font-size 0.3s, margin-left 0.25s;
+
   i {
-    font-size: 13px!important;
+    font-size: 13px !important;
     transition: font-size 0.3s;
   }
 }
@@ -212,34 +255,38 @@ body, html {
 
 #filter-buttons {
   opacity: 0;
-  margin-right:-100px;
+  margin-right: -100px;
   transition: opacity 0.5s, margin-right 1s;
 }
+
 #filter-buttons.show {
   transition: opacity 1s, margin-right 1s;
   opacity: 1;
-  margin-right:0;
+  margin-right: 0;
 }
 
 .edit-link, .edit-filter {
-  color:white;
+  color: white;
   transition: color 0.2s;
+}
 
-}
 .edit-link:hover {
-  color:darken(white,5%);
+  color: darken(white, 5%);
 }
+
 .edit-filter:hover {
-  color:darken(white,15%);
+  color: darken(white, 15%);
 }
+
 #heartcount.gold {
-  color:#FFC069 !important;
+  color: #FFC069 !important;
 }
+
 #heartcount {
   font-weight: 600;
   font-size: 13px;
   z-index: 999998;
-  color:white;
+  color: white;
   position: absolute;
   margin-top: -31px;
   margin-left: -4px;
@@ -249,18 +296,21 @@ body, html {
 
 
 .tooltip.show {
-  opacity: 1!important;
+  opacity: 1 !important;
 }
-.tooltip>.tooltip-inner {
 
-  opacity: 1!important;
+.tooltip > .tooltip-inner {
+
+  opacity: 1 !important;
   background-color: #FFC069;
 
-  font-weight:600;
+  font-weight: 600;
 
-}  .tooltip.bs-tooltip-top .tooltip-arrow::before {
-     border-top-color: #FFC069;
-   }
+}
+
+.tooltip.bs-tooltip-top .tooltip-arrow::before {
+  border-top-color: #FFC069;
+}
 
 .tooltip.bs-tooltip-bottom .tooltip-arrow::before {
   border-bottom-color: #FFC069;
@@ -275,8 +325,6 @@ body, html {
 }
 
 
-
-
 .heart-info {
   cursor: default;
   pointer-events: none;
@@ -284,8 +332,8 @@ body, html {
   font-size: 15px;
   line-height: -14px;
   //color: #FFC069 !important;
-  color:white;
-  margin-left:-70px;
+  color: white;
+  margin-left: -70px;
   height: 0;
   transition: opacity 0.3s, margin-left 1s;
   opacity: 0;
@@ -309,18 +357,19 @@ body, html {
   .heart-info {
     transition: opacity 1s, margin-left 1s;
     margin-left: 1px;
-   opacity: 100%;
+    opacity: 100%;
   }
 
   .hover-title {
     background-color: rgba(0, 0, 0, 80%);
-    padding-left:5px;
+    padding-left: 5px;
 
     li {
-      width:81%;
+      width: 81%;
     }
+
     li.w88 {
-      width:88% !important;
+      width: 88% !important;
     }
 
   }
@@ -346,34 +395,41 @@ body, html {
     color: darken(white, 20%);
   }
 }
+
 .blockactivate:not(".reduce-margin"):hover {
 
   .hover-title {
     li {
-      width: 84%!important;
+      width: 84% !important;
     }
   }
 }
 
-.fadeoutbg {pointer-events: none;
-  background: linear-gradient(to right, transparent, #3B3C3F, #3B3C3F, #3B3C3F, #3B3C3F, #3B3C3F, #3B3C3F, #3B3C3F, #3B3C3F);position: absolute;z-index:33;width: 200%;height: 93%;margin-top:-20px;
-  margin-left:62vw;
+.fadeoutbg {
+  pointer-events: none;
+  background: linear-gradient(to right, transparent, #3B3C3F, #3B3C3F, #3B3C3F, #3B3C3F, #3B3C3F, #3B3C3F, #3B3C3F, #3B3C3F);
+  position: absolute;
+  z-index: 33;
+  width: 200%;
+  height: 93%;
+  margin-top: -20px;
+  margin-left: 62vw;
   @media (min-width: 1600px) {
-    margin-left:58vw;
+    margin-left: 58vw;
   }
   @media (min-width: 1800px) {
-    margin-left:50vw;
+    margin-left: 50vw;
   }
   @media (max-width: 600px) {
-    display:none;
+    display: none;
   }
 }
 
-.edit, .copy  {
+.edit, .copy {
   color: white;
 }
 
-.edit:hover, .copy:hover  {
+.edit:hover, .copy:hover {
   color: darken(white, 20%) !important;
 }
 
@@ -409,7 +465,6 @@ body, html {
   -moz-align-items: center;
   align-items: center;
 }
-
 
 
 .stars-wrapper-block {
@@ -517,24 +572,28 @@ button:hover .fa-solid {
 .gold {
   color: #FFC069 !important;
 }
+
 .form-check-input:checked {
   background-color: #3B3C3F;
   border-color: lighten(#3B3C3F, 10%);
 }
+
 .favorite {
-  color: darken(white,10%);
-  font-size:22px!important;
+  color: darken(white, 10%);
+  font-size: 22px !important;
 }
+
 .favorite:hover {
-  color:#FFC069;
+  color: #FFC069;
 }
+
 .form-check-input:focus {
   border-color: lighten(#3B3C3F, 15%);
   box-shadow: 0 0 0 0.25rem rgb(59, 60, 63, .25) !important;
 }
 
 .list {
-  transition: transform 0.5s, background-color 0.5s ease-in-out, margin-right 0.5s , margin-left 0.5s;
+  transition: transform 0.5s, background-color 0.5s ease-in-out, margin-right 0.5s, margin-left 0.5s;
   margin-bottom: 20px;
   margin-right: 1rem;
 
@@ -544,6 +603,7 @@ button:hover .fa-solid {
   }
 
 }
+
 .list:hover {
   margin-right: 2rem;
   margin-left: 1rem;
@@ -552,43 +612,42 @@ button:hover .fa-solid {
 
 .front-element {
   .list-start {
-    color:rgba(255, 255, 255, 0.3)!important;
+    color: rgba(255, 255, 255, 0.3) !important;
     transition: color 1s, background-color 0.2s ease-in-out;
-    background-color:#2E3134;
+    background-color: #2E3134;
+
     img {
       transition: opacity 1s;
       opacity: 0.2;
     }
   }
+
   .list-end-same {
     transition: color 1s, background-color 0.2s ease-in-out;
-    background-color:#2E3134;
+    background-color: #2E3134;
   }
 }
-
-
-
 
 
 .front-element:hover {
   transform: scale(1.05) !important;
 
 
-
   .list-start {
     img {
       opacity: 1;
     }
-    color:white!important;
+
+    color: white !important;
     background-color: #212529;
   }
+
   .list-end-same {
 
-    color:white;
+    color: white;
     background-color: #212529;
   }
 }
-
 
 
 .list-start {
@@ -627,7 +686,6 @@ button:hover .fa-solid {
 }
 
 
-
 .hamburger {
   padding-top: 25px !important;
   padding-right: 0px !important;
@@ -653,12 +711,12 @@ button:hover .fa-solid {
 .votes {
 
 }
-.navbar-dark .navbar-nav .nav-link:hover
-{
-  color: rgba(255,255,255,.55);
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: rgba(255, 255, 255, .55);
 }
-.navbar-dark .navbar-nav .nav-link.active:hover
-{
+
+.navbar-dark .navbar-nav .nav-link.active:hover {
   color: white;
 }
 

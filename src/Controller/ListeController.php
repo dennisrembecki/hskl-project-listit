@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Liste;
 use App\Entity\ListeElement;
 use App\Entity\Vote;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Filesystem\Filesystem;
@@ -97,9 +98,17 @@ class ListeController extends AbstractController
     public function list($id, Request $request, ManagerRegistry $doctrine, Filesystem $filesystem): Response
     {
         $list = $doctrine->getRepository(Liste::class)->findOneBy(["id" => $id]);
+        $elements = $list->getElements();
 
-        //TODO Calculate Votes → Besser bei großen Datenmengen in Element anlegen und beim Voten hochzählen
-        foreach ($list->getElements() as $element) {
+
+        //Bereits erstellte Listen anpassen
+        if (!$list->getSort()) {
+            $list->setSort("nosort");
+            $doctrine->getManager()->flush();
+        }
+
+        //Calculate Votes → Ggf besser bei großen Datenmengen in Element anlegen und beim Voten hochzählen
+        foreach ($elements as $element) {
 
             foreach ($element->getVotes() as $vote) {
 
@@ -169,10 +178,47 @@ class ListeController extends AbstractController
                 if (!property_exists($element, "votes")) {
                     $element->starvotes = "";
                 }
-
             }
         }
 
+        //RATING
+        $list->realsort = "nosort";
+
+        if ($request->get("sort") == "name" || !$request->get("sort") && $list->getSort() == "name") {
+
+            $iterator = $elements->getIterator();
+            $iterator->uasort(function ($a, $b) {
+                return ($a->getName() < $b->getName()) ? -1 : 1;
+            });
+            $elements = new ArrayCollection(iterator_to_array($iterator));
+            $list->realsort = "name";
+
+        } else  if ($request->get("sort") == "rating"  || !$request->get("sort") && $list->getSort() == "rating") {
+
+            if ($list->getRating() == "stars") {
+                $iterator = $elements->getIterator();
+                $iterator->uasort(function ($a, $b) {
+                    return ($b->stars < $a->stars) ? -1 : 1;
+                });
+                $elements = new ArrayCollection(iterator_to_array($iterator));
+            } else {
+                $iterator = $elements->getIterator();
+                $iterator->uasort(function ($a, $b) {
+                    return ($b->upvotes-$b->downvotes < $a->upvotes-$a->downvotes) ? -1 : 1;
+                });
+                $elements = new ArrayCollection(iterator_to_array($iterator));
+            }
+            $list->realsort = "rating";
+
+        } else  if ($request->get("sort") == "date"  || !$request->get("sort") && $list->getSort() == "date") {
+            $iterator = $elements->getIterator();
+            $iterator->uasort(function ($a, $b) {
+                return ($a->getDate() < $b->getDate()) ? -1 : 1;
+            });
+            $elements = new ArrayCollection(iterator_to_array($iterator));
+            $list->realsort = "date";
+
+        }
 
         if ($request->getMethod() == "POST") {
 
@@ -373,10 +419,11 @@ class ListeController extends AbstractController
 
         }
 
+
         return $this->render('liste/view.html.twig', [
             'controller_name' => 'ListeController',
             'list' => $list,
-            'elements' => $list->getElements()
+            'elements' => $elements
         ]);
     }
 

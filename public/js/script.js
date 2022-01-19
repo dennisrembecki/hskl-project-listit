@@ -166,6 +166,13 @@ $(function () {
             $("#filter").click(function() {
                $("#filter-buttons").toggleClass("show");
             });
+            /*
+            $("#filter-name").click(function() {
+            });
+            $("#filter-bewertung").click(function() {
+            });
+            $("#filter-datum").click(function() {
+            });*/
 
             // Copy Elements
             $("#button_newlist").click(function () {

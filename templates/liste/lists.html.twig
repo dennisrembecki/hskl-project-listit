@@ -10,13 +10,7 @@
                 {% for list in lists|reverse %}
 
                     <div class="d-flex position-relative" style="margin-right: -5000px;">
-                        <hr class="linie" style="    color: #d5d5d7 !important;
-                            width: 100%;
-                            height: 5px;
-                            margin-top: 12px;
-                            margin-left:20px;
-                            z-index: 0;
-                            position: absolute;">
+                        <hr class="linie">
                         <a class="list text-decoration-none link-light ms-0" style="z-index: 20;height: 34px;" href="{{ path('list_view', {id: list.id}) }}">
                             <span class="list-start">{% if list.private == true %}<i class="fa-solid fa-lock"></i>{% endif %} {{ list.name|default(list.id) }}</span><span class="list-end">{{ list.category|category|raw }}</span>
                         </a>
@@ -42,13 +36,7 @@
                 {% for list in app.user.favorits|reverse|slice(0,10) %}
 
                     <div class="d-flex position-relative" style="margin-right: -2000px;">
-                        <hr class="linie" style="    color: #d5d5d7 !important;
-                            width: 100%;
-                            height: 5px;
-                            margin-top: 12px;
-                            margin-left:20px;
-                            z-index: 0;
-                            position: absolute;">
+                        <hr class="linie">
                         <a class="list text-decoration-none link-light ms-0" style="z-index: 20;height: 34px;" href="{{ path('list_view', {id: list.id}) }}">
                             <span class="list-start">{% if list.private == true %}<i class="fa-solid fa-lock"></i>{% endif %} {{ list.name|default(list.id) }}</span><span class="list-end">{{ list.category|category|raw }}</span>
                         </a>

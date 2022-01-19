@@ -4,7 +4,6 @@
 
     <div class="container position-relative" id="view">
 
-
         <!-- ACTIONS -->
         {% if list.creator == app.user %}
             <div class="position-absolute" style="font-size:29px;right:14px;">
@@ -30,31 +29,35 @@
             </a>
         </div>
 
-
         <!-- NAME/ KATEGORIE -->
-        <h1>{{ list.name }} {% if not list.private %}<span style="font-size: 30px;color:#FFC069 !important;" data-bs-toggle="tooltip" data-bs-placement="top" title="Zertifizierte Liste"><i class="fa-solid fa-award"></i></span>{% endif %}</h1>
-        <h2 >{{ list.category|category|raw }}         <div class="user" style="display:inline;position:relative;top:-2px;max-width:200px;color:#9B9D9E;padding:6px 12px 6px 12px;cursor:pointer;background-color: #212529;border-radius: 20px;">{% if list.private %}<i class="fa-solid fa-user-lock"></i>{% else %}<i class="fa-solid fa-user"></i>{% endif %}dennis123</div>
+        <h1 class="responsiv">{{ list.name }} {% if not list.private %}<span style="font-size: 30px;color:#FFC069 !important;" data-bs-toggle="tooltip" data-bs-placement="top" title="Zertifizierte Liste"><i class="fa-solid fa-award"></i></span>{% endif %}</h1>
+        <h2>{{ list.category|category|raw }} <div class="user userinfo">{% if list.private %}<i class="fa-solid fa-user-lock"></i>{% else %}<i class="fa-solid fa-user"></i>{% endif %}dennis123</div>
         </h2>
 
         <!-- FILTER -->
-        <div class="text-end" id="filter" style="margin-top:-54px;padding-bottom: 16px;">
+        <div class="text-end filter" id="filter">
             <div class="btn-group" role="group" id="filter-buttons">
-                <button type="button" class="btn btn-outline-light">
+                <a href="{{ path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) }}?sort=name" type="button" class="btn btn-outline-light {% if list.realsort == "name" %}active{% endif %}" id="filter-name">
                     <i class="fa-solid fa-list me-1"></i> Name
-                </button>
+                </a>
                 {% if list.rating == "stars" or list.rating == "like" %}
-                <button type="button" class="btn btn-outline-light {% if list.name != "Game Releases" %}active{% endif %}">
+                <a href="{{ path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) }}?sort=rating" type="button" id="filter-bewertung" class="btn btn-outline-light {% if list.realsort == "rating" %}active{% endif %}">
                     {% if list.rating == "stars" %}
                         <i class="fa-solid fa-star me-1"></i>
                     {% else %}
                         <i class="fa-solid fa-thumbs-up me-1"></i>
                     {% endif %}
                     Bewertung
-                </button>
+                </a>
                 {% endif %}
-                <button type="button" class="btn btn-outline-light {% if list.name == "Game Releases" %}active{% endif %} {% if list.rating != "stars" and list.rating != "like" %}active{% endif %}"  >
-                    <i class="fa-solid fa-calendar me-1"></i> Datum
-                </button>
+                {% if list.sort == "date" or list.showdate %}
+                <a href="{{ path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) }}?sort=date" type="button" id="filter-datum" class="btn btn-outline-light {% if list.realsort == "date" %}active{% endif %}"  >
+                    <i class="fa-solid fa-calendar me-1"></i> Datumsangabe
+                </a>
+                {% endif %}
+                <a href="{{ path(app.request.attributes.get('_route'),app.request.attributes.get('_route_params')) }}?sort=nosort" type="button" id="filter-datum" class="btn btn-outline-light {% if list.realsort == "nosort" %}active{% endif %}"  >
+                    <i class="fa-solid fa-calendar me-1"></i> Erstellungsdatum
+                </a>
             </div>
         </div>
 
@@ -65,7 +68,9 @@
 
             {# LISTENELEMENT #}
             <div style="margin-top:15px;"></div>
-            {% for element in elements|sort((a, b) => a.downvotes|default("") <=> b.downvotes|default(""))|sort((a, b) => b.upvotes|default("") <=> a.upvotes|default(""))|sort((a, b) => b.stars|default("") <=> a.stars|default(""))|sort((a, b) => a.date|default("") <=> b.date|default("")) %}
+
+            {# for element in elements|sort((a, b) => a.downvotes|default("") <=> b.downvotes|default(""))|sort((a, b) => b.upvotes|default("") <=> a.upvotes|default(""))|sort((a, b) => b.stars|default("") <=> a.stars|default(""))|sort((a, b) => a.date|default("") <=> b.date|default("")) #}
+            {% for element in elements %}
                 <div class="{% if list.type == "block" %}col-lg-3 col-md-4 col-sm-6 col-12{% if loop.index > 4 %}mt-3 {% endif %}{% else %}col-12{% endif %} position-relative element-wrapper mb-3">
 
                     <div class="element-body row rounded blockactivate zoom {% if list.type == "block" %}overflow-hidden{% endif %} position-relative">
@@ -466,6 +471,17 @@
                                 <option {% if list.rating == "norating" %}selected{% endif %} value="norating">Keine Bewertung</option>
                             </select>
                             <label for="floatingSelect2" class="text-dark">Bewertung auswählen</label>
+                        </div>
+
+                        <div class="form-floating w-100 mt-3">
+                            <select class="form-select w-100" name="sort" id="sortierung"
+                                    aria-label="Floating label select example">
+                                <option {% if list.sort == "name" %}selected{% endif %} value="name">Name</option>
+                                <option {% if list.sort == "rating" %}selected{% endif %} value="rating">Bewertung</option>
+                                <option {% if list.sort == "date" %}selected{% endif %} value="date">Datumsangabe</option>
+                                <option {% if list.sort == "nosort" %}selected{% endif %} value="nosort">Erstellungsdatum</option>
+                            </select>
+                            <label for="sortierung" class="text-dark">Sortierung auswählen</label>
                         </div>
 
                         <div class="form-check mt-3" >
