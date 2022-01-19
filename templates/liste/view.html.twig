@@ -214,7 +214,7 @@
 
                         <!-- Bewertung: Stars -->
                         {% if list.rating == "stars" %}
-                            <div class="{% if list.type == "block" %}stars-wrapper stars-wrapper-block rounded-top{% else %}stars-wrapper bg-transparent flex-grow-1 col-xl-2 col-md-4 col-sm-5 col-6  align-self-center text-end{% endif %}">
+                            <div class="{% if is_granted('ROLE_USER') %}{% else %}disabled {% endif %}{% if list.type == "block" %}stars-wrapper stars-wrapper-block rounded-top{% else %}stars-wrapper bg-transparent flex-grow-1 col-xl-2 col-md-4 col-sm-5 col-6  align-self-center text-end{% endif %}">
                                 {% if element.starrated is defined and element.starrated != "0" %}
                                 <span class="stars voted" data-value="{{ element.stars }}"
                                       data-rated="{{ element.starrated*2 }}" data-id="{{ element.id }}"></span>
@@ -223,6 +223,7 @@
                                       data-id="{{ element.id }}"></span>
                                 {% endif %}
                                 <span class="heart-info {% if element.starrated is defined and element.starrated != "0" %}gold{% endif %}" data-id="{{ element.id }}">{{ element.starvotes|default("0") }} Stimme{% if element.starvotes|default("0") != "1"  %}n{% endif %}</span>
+                                </a>
                             </div>
                         {% endif %}
 
