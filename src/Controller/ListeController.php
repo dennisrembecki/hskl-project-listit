@@ -17,16 +17,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class ListeController extends AbstractController
 {
 
-    /*
-        TODO
-        Filter Funktionalität
-        Uneingelogte Icon Darstellung verbessern
-        Profilfunktionalitäten (Nutzerprofile, Freunde hinzufügen)
-        Registrierungsbestätigung/ Passwort vergessen
-        Beiträge Melden Funktionalität
-        Listen per API generieren (z.B.: Game Releases)
-        Auf Domain/ Webspace einrichten
-    */
 
     /**
      * @Route("/lists", name="lists")
