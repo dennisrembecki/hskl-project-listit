@@ -1,19 +1,130 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+<head><?php header('Access-Control-Allow-Origin: *'); ?>
+    <meta charset="UTF-8">
+    <title>{% block title %}LISTIT{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('css/jquery-ui.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/hamburger.css') }}">
+    <script src="{{ asset('js/jquery.js') }}"></script>
+    <!--script src="{{ asset('js/jquery-ui.js') }}"></script-->
+    <!--script src="{{ asset('js/ckeditor.js') }}"></script-->
+    <script src="{{ asset('js/popper.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.js') }}"></script>
+    <script src="{{ asset('js/script.js') }}"></script>
+</head>
+<body>
+{{ include('navbar.html.twig') }}
+{% block body %}{% endblock %}
+<!-- Liste erstellen -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark border-0">
+            <div class="modal-header pb-0">
+                <h5 class="modal-title" id="createModalLabel">Liste erstellen</h5>
+                <a class="close" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></a>
+            </div>
+            <form method="post" action="{{ path("list_create") }}" class="p-3">
+                <div class="form-floating mb-3 w-100">
+                    <input type="text" class="form-control w-100" name="name" id="floatingInput"
+                           placeholder="name@example.com">
+                    <label for="floatingInput" class="text-dark">Wie soll die Liste heißen?</label>
+                </div>
+                <div class="form-floating w-100">
+                    <select class="form-select w-100" name="category" id="floatingSelect"
+                            aria-label="Floating label select example">
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+                        <!--option value="streaming">Streamen</option-->
+                        <option value="movies">Filme</option>
+                        <option value="series">Serien/Shows</option>
+                        <option value="games">Spiele</option>
+                        <option value="websites">Webseiten</option>
+                        <option value="other" selected>Sonstiges</option>
+                        <!--
+                        <option value="videos">Videos</option>
+                        <option value="music">Musik</option>
+                        <option value="podcasts">Podcasts</option>
+                        <option value="software">Software/Apps</option>
+                        <option value="science">Literatur/Wissenschaft</option>
+                        <option value="nutrition">Ernährung</option>
+                         <option value="beauty">Beauty</option>
+                        <option value="design">Design</option>
+                        <option value="buy">Einkaufen</option>
+                        <option value="nutrition">Ernährung</option>
+                        <option value="food">Lebensmittel/Getränke</option>
+                        <option value="devices">Elektronik/Geräte</option>
+                        <option value="games">Spiele</option>
+                        <option value="beauty">Schönheit</option>
+                        <option value="clothing">Kleidung/Taschen/Schmuck</option>
+                        <option value="household">Küche/Haushalt/Wohnen</option>
+                        <option value="leisure">Sport/Freizeit/Garten</option>
+                        <option value="photo">Kamera/Foto</option>
+                        <option value="work">Büro/Gewerbe/Industrie</option>
+                        <option value="mobility">Mobilität</option>
+                        <option value="science">Wissenschaft</option>
+                        <option value="animals">Tiere</option>
+                        <option value="presents">Geschenke</option>
+                        -->
+
+                    </select>
+                    <label for="floatingSelect" class="text-dark">Kategorie auswählen</label>
+                </div>
+                <div class="form-floating w-100 mt-3">
+                    <select class="form-select w-100" name="type" id="floatingSelect3"
+                            aria-label="Floating label select example">
+                        <option value="list">Liste</option>
+                        <option value="block">Kacheln</option>
+                    </select>
+                    <label for="floatingSelect3" class="text-dark">Darstellung auswählen</label>
+                </div>
+                <div class="form-floating w-100 mt-3">
+                    <select class="form-select w-100" name="rate" id="floatingSelect2"
+                            aria-label="Floating label select example">
+                        <option value="stars">6 Sterne</option>
+                        <option value="like">Gefällt mir/ Gefällt mir nicht</option>
+                        <option value="norating">Keine Bewertung</option>
+                    </select>
+                    <label for="floatingSelect2" class="text-dark">Bewertung auswählen</label>
+                </div>
+                <!--div class="form-floating w-100 mt-3">
+                    <select class="form-select w-100" name="sort" id="floatingSelect3"
+                            aria-label="Floating label select example">
+                        <option value="rate">Bewertung</option>
+                        <option value="date">Datumsangabe</option>
+                    </select>
+                    <label for="floatingSelect2" class="text-dark">Sortierung auswählen</label>
+                </div-->
+                <div class="form-check mt-3" >
+                    <input class="form-check-input" type="checkbox" name="free" value="free" id="flexCheckDefault" checked>
+                    <label class="form-check-label" for="flexCheckDefault" >
+                        Öffentliche Liste <i class="fa-regular fa-circle-question" data-bs-toggle="tooltip" data-bs-placement="top"  data-toggle="tooltip" data-placement="left" title="Andere können Einträge bewerten oder hinzufügen"  style="margin-left:2px;"></i>
+                    </label>
+                </div>
+
+                <div class="form-check mt-1" >
+                    <input class="form-check-input" type="checkbox" id="ascdasfasfasfsa" name="showdate" value="yes" checked>
+                    <label class="form-check-label" for="ascdasfasfasfsa"  >
+                        "Datum" bei Elementen anzeigen <i class="fa-regular fa-circle-question" data-bs-toggle="tooltip" data-bs-placement="top"  data-toggle="tooltip" data-placement="left" title="Bei Kacheln nicht verfügbar."  style="margin-left:2px;"></i>
+                    </label>
+                </div>
+
+                <div class="form-check mt-1" >
+                    <input class="form-check-input" type="checkbox" id="xasfasfasfasf" name="showinfo" value="yes" checked>
+                    <label class="form-check-label" for="xasfasfasfasf" >
+                        "Zusätzliche Info" bei Elementen anzeigen <i class="fa-regular fa-circle-question" data-bs-toggle="tooltip" data-bs-placement="top"  data-toggle="tooltip" data-placement="left" title="Bei Kacheln nicht verfügbar."  style="margin-left:2px;"></i>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-outline-light w-100 mt-2" id="create_list_button"><i
+                            class="fa-solid fa-square-plus me-1"></i> Liste erstellen
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+</body>
 </html>

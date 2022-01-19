@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+
+    <div class="container" style="background-color: #3B3C3F!important;">
+
+        <div class="row">
+            <div class="col-12 position-relative">
+                <h3 class="large">Die neusten Listen</h3>
+                <div class="fadeoutbg"></div>
+                {% for list in lists|slice(0, 10) %}
+                    {% if list.private != true %}
+                        <div class="d-flex position-relative" style="margin-right: -5000px;">
+                            <hr class="linie" style="    color: #d5d5d7 !important;
+                            width: 100%;
+                            height: 5px;
+                            margin-top: 12px;
+                            margin-left:20px;
+                            z-index: 0;
+                            position: absolute;">
+                            <a class="list text-decoration-none link-light ms-0" style="z-index: 20;height: 34px;" href="{{ path('list_view', {id: list.id}) }}">
+                                <span class="list-start">{{ list.name|default(list.id) }}</span><span class="list-end">{{ list.category|category|raw }}</span>
+                            </a>
+                        {% for element in list.elements|slice(0,15) %}
+                            <a class="list text-decoration-none link-light front-element p-0 flex-nowrap" style="z-index: 15;"   href="{{ path('list_view', {id: list.id}) }}">
+                                <span class="list-start pe-0 overflow-hidden flex-nowrap">
+                                          {% if element.img is defined and element.img is not null %}
+                                              <img src="{{ element.img }}" class="img" style="height: 40px;margin-top: -6px;">
+                                          {% endif %}
+                                    <span class="p-2  flex-nowrap">{{ element.name|urlfilter }}</span>
+                                </span>
+                                <span class="list-end-same flex-nowrap"></span>
+                            </a>
+
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="col-12 col-lg-6">
+                <h3 class="mt-5"><i class="fa-solid fa-video"></i> Filme</h3>
+                {% for list in lists %}
+                    {% if list.private != true %}
+                    {% if list.category == "movies" %}
+                        <div class="d-flex">
+                            <a class="list text-decoration-none link-light  ms-0" href="{{ path('list_view', {id: list.id}) }}">
+                                <span class="list-start pe-0">{{ list.name|default(list.id) }}</span><span class="list-end-same"></span>
+                            </a>
+                            <br>
+                        </div>
+                    {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="col-12 col-lg-6">
+                <h3 class="mt-5"><i class="fa-solid fa-video"></i> Serien/Shows</h3>
+                {% for list in lists %}
+                    {% if list.private != true %}
+                    {% if list.category == "series" %}
+                        <div class="d-flex">
+                            <a class="list text-decoration-none link-light  ms-0" href="{{ path('list_view', {id: list.id}) }}">
+                                <span class="list-start pe-0">{{ list.name|default(list.id) }}</span><span class="list-end-same"></span>
+                            </a>
+                            <br>
+                        </div>
+                    {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="col-12 col-lg-6">
+                <h3 class="mt-5"><i class="fa-solid fa-laptop"></i> Webseiten</h3>
+                {% for list in lists %}
+                    {% if list.private != true %}
+                        {% if list.category == "websites" %}
+                            <div class="d-flex">
+                                <a class="list text-decoration-none link-light ms-0" href="{{ path('list_view', {id: list.id}) }}">
+                                    <span class="list-start pe-0">{{ list.name|default(list.id) }}</span><span class="list-end-same"></span>
+                                </a>
+                                <br>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <h3 class="mt-5"><i class="fa-solid fa-folder-tree"></i> Sonstiges</h3>
+                {% for list in lists %}
+                    {% if list.private != true %}
+                        {% if list.category == "other" %}
+                            <div class="d-flex">
+                                <a class="list text-decoration-none link-light  ms-0" href="{{ path('list_view', {id: list.id}) }}">
+                                    <span class="list-start pe-0">{{ list.name|default(list.id) }}</span><span class="list-end-same"></span>
+                                </a>
+                                <br>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,526 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container position-relative" id="view">
+
+
+        <!-- ACTIONS -->
+        {% if list.creator == app.user %}
+            <div class="position-absolute" style="font-size:29px;right:14px;">
+                <a href="#" data-id="{{ list.id }}"  data-bs-toggle="modal" data-bs-target="#editList"
+                   class="edit-link">
+                    <i class="fa-solid fa-gear noanimate"></i>
+                </a>
+            </div>
+        <div class="position-absolute" style="font-size:29px;right:{% if list.creator != app.user %}10{% else %}55{% endif %}px;">
+            <a href="{% if not app.user %}login{% else %}#{% endif %}" data-id="{{ list.id }}"
+               class="edit-link heart {% if app.user %}{% if list in app.user.favorits %}gold{% endif %}{% endif %} me-2">
+                <i class="fa-solid fa-heart noanimate"></i></a>
+            </a>
+            <div id="heartcount" class="pointer {% if app.user %}{% if list in app.user.favorits %}{% else %}gold{% endif %}{% endif %} ">
+                {% if list.users|length > 0  %}{{ list.users|length }}{% endif %}
+            </div>
+        </div>
+        {% endif %}
+        <div class="position-absolute" id="filter" style="font-size:29px;right:{% if list.creator != app.user %}15{% else %}112{% endif %}px;">
+            <a href="#" data-id="{{ list.id }}"
+               class="edit-filter">
+                <i class="fa-solid fa-filter noanimate"></i>
+            </a>
+        </div>
+
+
+        <!-- NAME/ KATEGORIE -->
+        <h1>{{ list.name }} {% if not list.private %}<span style="font-size: 30px;color:#FFC069 !important;" data-bs-toggle="tooltip" data-bs-placement="top" title="Zertifizierte Liste"><i class="fa-solid fa-award"></i></span>{% endif %}</h1>
+        <h2 >{{ list.category|category|raw }}         <div class="user" style="display:inline;position:relative;top:-2px;max-width:200px;color:#9B9D9E;padding:6px 12px 6px 12px;cursor:pointer;background-color: #212529;border-radius: 20px;">{% if list.private %}<i class="fa-solid fa-user-lock"></i>{% else %}<i class="fa-solid fa-user"></i>{% endif %}dennis123</div>
+        </h2>
+
+        <!-- FILTER -->
+        <div class="text-end" id="filter" style="margin-top:-54px;padding-bottom: 16px;">
+            <div class="btn-group" role="group" id="filter-buttons">
+                <button type="button" class="btn btn-outline-light">
+                    <i class="fa-solid fa-list me-1"></i> Name
+                </button>
+                {% if list.rating == "stars" or list.rating == "like" %}
+                <button type="button" class="btn btn-outline-light {% if list.name != "Game Releases" %}active{% endif %}">
+                    {% if list.rating == "stars" %}
+                        <i class="fa-solid fa-star me-1"></i>
+                    {% else %}
+                        <i class="fa-solid fa-thumbs-up me-1"></i>
+                    {% endif %}
+                    Bewertung
+                </button>
+                {% endif %}
+                <button type="button" class="btn btn-outline-light {% if list.name == "Game Releases" %}active{% endif %} {% if list.rating != "stars" and list.rating != "like" %}active{% endif %}"  >
+                    <i class="fa-solid fa-calendar me-1"></i> Datum
+                </button>
+            </div>
+        </div>
+
+        <input type="hidden" id="covermode"
+               value="{% if list.category == "series" %}tv{% elseif list.category == "movies" %}movie{% elseif list.category == "games" %}games{% elseif list.category == "other" %}other{% endif %}">
+
+        <div id="list" class="row {% if list.type == "block" %}blocks{% else %}rows{% endif %}">
+
+            {# LISTENELEMENT #}
+            <div style="margin-top:15px;"></div>
+            {% for element in elements|sort((a, b) => a.downvotes|default("") <=> b.downvotes|default(""))|sort((a, b) => b.upvotes|default("") <=> a.upvotes|default(""))|sort((a, b) => b.stars|default("") <=> a.stars|default(""))|sort((a, b) => a.date|default("") <=> b.date|default("")) %}
+                <div class="{% if list.type == "block" %}col-lg-3 col-md-4 col-sm-6 col-12{% if loop.index > 4 %}mt-3 {% endif %}{% else %}col-12{% endif %} position-relative element-wrapper mb-3">
+
+                    <div class="element-body row rounded blockactivate zoom {% if list.type == "block" %}overflow-hidden{% endif %} position-relative">
+
+                        <!-- Bild -->
+                        {% if element.img is not null %}
+                            {% if list.type == "block" %}
+                                <a href="#" class="px-0"
+                                   {% if list.category != "movies" and list.category != "series" %}style="cursor: default!important;z-index:0;"{% endif %}
+
+                                        {#  if list.category == "movies" or list.category == "series" or list.category == "games" #}
+                                    data-name="{{ element.name }}" data-bs-toggle="modal" data-bs-target="#showTrailer"
+                                        {# endif #}>
+
+                                    <img src="{{ element.img }}" style="object-fit: cover;height: 450px;width: 100%;"
+                                         class="img-fluid blockimg p-0 m-0"
+                                    {% if not element.img %}height="200px"{% endif %}
+                                    >
+                                </a>
+                            {% else %}
+                                <div class="col-12 col-md-3  p-0 overflow-hidden rounded-start">
+                                    <img src="{{ element.img }}" class=" blockimg rounded-start"
+                                            {#  if list.category == "movies" or list.category == "series" or list.category == "games" #}
+                                         data-name="{{ element.name }}" data-bs-toggle="modal" data-bs-target="#showTrailer"
+                                            {# endif #}
+
+                                         style="object-fit: cover;height: 150px;;width: 100%;cursor: pointer;">
+                                </div>
+                            {% endif %}
+                        {% endif %}
+
+                        <!-- Name -->
+                        {% if list.type == "block" %}
+                            <div style="font-size: 20px;" class="hover-title rounded-bottom {% if list.creator == app.user or element.creator == app.user %}{% else %}reduce-margin{% endif %}">
+                                <ul class="m-0 p-0">
+                                    <li class="m-0 p-0 {% if app.user is null %}w88{% endif %}" >{{ element.name }}</li>
+                                </ul>
+                            </div>
+                        {% else %}
+                            <div class="col-6 d-block h5 col-md-3 my-3 my-md-0 align-self-center" style="font-weight: 600;z-index:2;">
+                                {% if element.name|urlfilter != element.name %}
+                                     <a href="{{ element.name }}" title="Link öffnen: {{ element.name }}" class="text-decoration-none link-light" style="" target="_blank">
+                                         <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                     </a>
+                                    <span class="mx-1"></span>
+                                {% endif %}
+                                {{ element.name|urlfilter }}
+                            </div>
+                        {% endif %}
+
+                        <!-- Info -->
+                        {% if list.type == "block" %}
+                        {% else %}
+                            {% if element.info and list.showinfo() %}
+                            <div class="col-6 col-md-2 my-3 my-md-1 align-self-center flex-grow-1">
+                                {{ element.info|default("") }}
+                            </div>
+                            {% endif %}
+                        {% endif %}
+
+                        <!-- Actions (Element) -->
+                        <div class="{% if list.type == "block" %}actions-block{% else %}actions{% endif %}" {% if list.type != "block" %}{% if app.user is not null %}style="margin-right: -42px;"{% else %}style="right: -58px!important;"{% endif %}{% endif %}>
+
+                            <a
+                                    {% if app.user is not null %}
+                                        href="#" class="copy me-2" data-bs-toggle="modal" data-bs-target="#copyElement"
+                                        data-id="{{ element.id }}"
+                                        data-name="{{ element.name }}"
+                                    {% else %}
+                                        href="/login" class="copy "
+                                    {% endif %}
+                            >
+                                <i class="fa-regular fa-copy"></i>
+                            </a>
+
+                            {% if list.creator == app.user or element.creator == app.user %}
+                            <a href="#" class="edit" data-bs-toggle="modal" data-bs-target="#editElement"
+                               data-id="{{ element.id }}"
+                               data-name="{{ element.name }}"
+                               data-date="{% if element.date %}{{ element.date|date('Y-m-d') }}{% endif %}"
+                               data-info="{{ element.info|default("") }}">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </a>
+                            {% endif %}
+                            {% if app.user == list.creator or app.user == element.creator %}
+                                <a href="#" class="delete ms-2" data-id="{{ element.id }}">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </a>
+                            {% else %}
+                                    <a href="#" class="flag ms-2" data-id="{{ element.id }}"
+                                       {% if list.creator == app.user or element.creator == app.user %}
+                                           {% if not app.user %}
+                                               style="margin-right:0;"
+                                           {% endif %}
+                                           {% else %}
+                                               {% if not app.user %}
+                                                   style="margin-right:0;"
+                                               {% else %}
+                                                   style="margin-right:20px;"
+                                               {% endif %}
+                                       {% endif %}
+                                    >
+                                    <i class="fa-regular fa-flag"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <!-- Datum -->
+                        {% if list.type == "block" %}
+                        {% else %}
+                        {% if element.date is defined and element.date is not null %}
+
+                            {% if list.showdate %}
+                            <div class="col-6 my-3 my-md-0 col-md-3 align-self-center text-end align-self-center">
+                                <input type="date" class="input-date" data-id="{{ element.id }}"
+                                       value="{{ element.date|date('Y-m-d') }}">
+                            </div>
+                            {% endif %}
+
+                        {% endif %}
+                        {% endif %}
+
+                        <!-- Bewertung: Likes -->
+                        {% if list.rating == "like" %}
+                            <div class="{% if list.type == "block" %}like-wrapper{% else %}col-12 my-3 my-md-0 col-md-3  flex-grow-1 text-end align-self-center pe-4{% endif %}">
+                                <a href="{% if is_granted('ROLE_USER') %}#{% else %}{{ path("login") }}{% endif %}"
+                                   class="vote-up {% if is_granted('ROLE_USER') %}vote-up-ajax{% endif %}
+                              text-decoration-none {% if element.upvoted is defined %}voted-up{% endif %}"
+                                   data-id="{{ element.id }}">
+                                    <i class="fa-solid fa-thumbs-up"></i>
+                                    <span class="votes me-3">{{ element.upvotes|default("0") }}</span>
+                                </a>
+                                <a href="{% if is_granted('ROLE_USER') %}#{% else %}{{ path("login") }}{% endif %}"
+                                   class="vote-down {% if is_granted('ROLE_USER') %}vote-down-ajax{% endif %} text-decoration-none {% if element.downvoted is defined %}voted-down{% endif %}"
+                                   data-id="{{ element.id }}">
+                                    <i class="fa-solid fa-thumbs-down"></i>
+                                    <span class="votes">{{ element.downvotes|default("0") }}</span>
+                                </a>
+                            </div>
+                        {% endif %}
+
+                        <!-- Bewertung: Stars -->
+                        {% if list.rating == "stars" %}
+                            <div class="{% if list.type == "block" %}stars-wrapper stars-wrapper-block rounded-top{% else %}stars-wrapper bg-transparent flex-grow-1 col-xl-2 col-md-4 col-sm-5 col-6  align-self-center text-end{% endif %}">
+                                {% if element.starrated is defined and element.starrated != "0" %}
+                                <span class="stars voted" data-value="{{ element.stars }}"
+                                      data-rated="{{ element.starrated*2 }}" data-id="{{ element.id }}"></span>
+                                {% else %}
+                                <span class="stars" data-value="{{ element.stars }}" data-rated="0"
+                                      data-id="{{ element.id }}"></span>
+                                {% endif %}
+                                <span class="heart-info {% if element.starrated is defined and element.starrated != "0" %}gold{% endif %}" data-id="{{ element.id }}">{{ element.starvotes|default("0") }} Stimme{% if element.starvotes|default("0") != "1"  %}n{% endif %}</span>
+                            </div>
+                        {% endif %}
+
+                        <!-- ENDE LISTELEMENT -->
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if list.private == true and list.creator != app.user %}
+            <div class="mb-5"></div>
+        {% else %}
+            <a class="btn btn-outline-light my-4"
+                    {% if is_granted('ROLE_USER') %} data-bs-toggle="modal" data-bs-target="#addElement"
+            {% else %} href="{{ path("login") }}"{% endif %}>
+                <i class="fa-solid fa-square-plus me-1"></i>
+                Element
+                hinzufügen
+            </a>
+        {% endif %}
+
+    </div>
+
+    <!-- Modal - Add Element -->
+    <div class="modal fade" id="addElement" tabindex="-1" aria-labelledby="addElementLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark border-0">
+                <div class="modal-header pb-0">
+                    <h5 class="modal-title" id="addElementLabel">Element erstellen</h5>
+                    <a class="close" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></a>
+
+                </div>
+                <div class="modal-footer border-0">
+                    <form method="post" class="w-100" enctype="multipart/form-data">
+
+                        <div class="form-floating mb-3 w-100">
+                            <input type="text" class="form-control w-100" name="name" id="loadCover"
+                                   placeholder="name@example.com">
+                            <label for="floatingInput" class="text-dark">Wie soll das Element heißen?</label>
+                        </div>
+
+                        <span class="text-muted h5 text-decoration-underline">Optional</span>
+
+                        <div id="imgpreview" class="d-flex flex-wrap justify-content-between">
+                        </div>
+
+                        {% if list.type != "block" and list.showinfo %}
+                        <label class="form-label mt-2 text-muted">Zusätzliche Info:</label>
+                        <input type="text" class="form-control w-100" name="info">
+                        {% endif %}
+
+                        <input type="hidden" name="coverurl" id="coverurl" value="">
+                        <label for="formFile" class="form-label mt-2 text-muted">Bild hochladen:</label>
+                        <input class="form-control" type="file" name="img" id="img">
+
+                        {% if list.type != "block" and list.showdate %}
+                        <label class="mt-2 text-muted">Datum:</label>
+                        <input type="date" id="date" name="date" class="form-control">
+                        {% endif %}
+
+                        <button type="submit" class="btn btn-outline-light w-100 mt-3" id="add_element_button"><i
+                                    class="fa-solid fa-square-plus me-1"></i>
+                            Element hinzufügen
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal - Edit Element -->
+    <div class="modal fade" id="editElement" tabindex="-1" aria-labelledby="editElementLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark border-0">
+                <div class="modal-header pb-0">
+                    <h5 class="modal-title" id="editElementLabel">Element bearbeiten</h5>
+                    <a class="close" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></a>
+                </div>
+                <div class="modal-footer border-0">
+                    <form method="post" class="w-100" enctype="multipart/form-data">
+
+                        <input type="hidden" name="edit_id" id="edit_id" value="">
+
+                        <div class="form-floating mb-3 w-100">
+                            <input type="text" class="form-control w-100 loadCover" name="name" id="e_name"
+                                   placeholder="name@example.com">
+                            <label for="floatingInput" class="text-dark">Name</label>
+                        </div>
+
+                        <span class="text-muted h5 text-decoration-underline">Optional</span><br>
+
+                        {% if list.type != "block" and list.showinfo %}
+                        <label class="form-label mt-2 text-muted">Zusätzliche Info:</label>
+                        <input type="text" class="form-control w-100" name="info" id="e_info">
+                        {% endif %}
+
+                        <label for="formFile" class="form-label  text-muted mt-2">Bild hochladen:</label>
+                        <input class="form-control" type="file" name="img" id="e_img">
+
+                        {% if list.type != "block" and list.showdate %}
+                        <label class="mt-2  text-muted">Datum:</label>
+                        <input type="date" name="date" id="e_date" class="form-control">
+                        {% endif %}
+
+                        <button type="submit" class="btn btn-outline-light w-100 mt-3" id="edit_element_button">
+                            <i class="fa-regular fa-floppy-disk me-1"></i>
+                            Element speichern
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal - Copy Element -->
+    <div class="modal fade" id="copyElement" tabindex="-1" aria-labelledby="CopyLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark border-0">
+                <div class="modal-header pb-0">
+                    <h5 class="modal-title" id="CopyLabel">Element kopieren</h5>
+                    <a class="close" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></a>
+                </div>
+                <h6 class="ps-3 pt-2 pb-0 mb-0" id="copy_name"></h6>
+                <div class="modal-footer border-0">
+                    <form method="post" class="w-100">
+
+                        <input type="hidden" id="copy_id" name="copy_id">
+                        <input type="hidden" id="newlist" name="newlist" value="no">
+
+                        <div class="btn-group w-100" role="group">
+                            <button type="button" class="btn btn-outline-light active" id="button_newlist"><i class="fa-solid fa-bars-staggered fa-flip-horizontal me-1"></i> Zu Liste hinzufügen</button>
+                            <button type="button" class="btn btn-outline-light" id="button_list"><i class="fa-solid fa-square-plus"></i> Neue Liste erstellen</button>
+                        </div>
+
+                        <div class="form-floating mt-3" id="addto_list">
+                            <select class="form-select" name="list" id="floatingSelect">
+                                {% if app.user %}
+                                    {% for list in app.user.lists|reverse %}
+                                        <option value="{{ list.id }}">{{ list.name }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                            <label for="floatingSelect" class="text-dark">Liste auswählen</label>
+                        </div>
+
+                        <div class="d-none" id="addto_newlist">
+
+                            <div class="form-floating mb-3 mt-3 w-100">
+                                <input type="text" class="form-control w-100" name="newlistname" id="floatsssingInput"
+                                       placeholder="name@example.com">
+                                <label for="floatsssingInput" class="text-dark">Wie soll die Liste heißen?</label>
+                            </div>
+                            <div class="form-floating w-100">
+                                <select class="form-select w-100" name="category" id="floatiaaangSelect"
+                                        aria-label="Floating label select example">
+                                    <option value="movies">Filme</option>
+                                    <option value="series">Serien/Shows</option>
+                                    <option value="games">Spiele</option>
+                                    <option value="websites">Webseiten</option>
+                                    <option value="other" selected>Sonstiges</option>
+
+                                </select>
+                                <label for="floatiaaangSelect" class="text-dark">Kategorie auswählen</label>
+                            </div>
+                            <div class="form-floating w-100 mt-3">
+                                <select class="form-select w-100" name="type" id="33333qfasfaf"
+                                        aria-label="Floating label select example">
+                                    <option value="list">Liste</option>
+                                    <option value="block">Kacheln</option>
+                                </select>
+                                <label for="33333qfasfaf" class="text-dark">Darstellung auswählen</label>
+                            </div>
+                            <div class="form-floating w-100 mt-3">
+                                <select class="form-select w-100" name="rate" id="saffsafafsfasf"
+                                        aria-label="Floating label select example">
+                                    <option value="stars">6 Sterne</option>
+                                    <option value="like">Gefällt mir/ Gefällt mir nicht</option>
+                                    <option value="norating">Keine Bewertung</option>
+                                </select>
+                                <label for="saffsafafsfasf" class="text-dark">Bewertung auswählen</label>
+                            </div>
+                            <div class="form-check mt-3" >
+                                <input class="form-check-input" type="checkbox" name="free" value="free" id="flexCheckDefault" checked>
+                                <label class="form-check-label" for="flexCheckDefault" data-toggle="tooltip" data-placement="left" title="Andere können Einträge bewerten oder hinzufügen" >
+                                    Öffentliche Liste <i class="fa-regular fa-circle-question" style="margin-left:2px;"></i>
+                                </label>
+                            </div>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-outline-light w-100 mt-3" id="copy_element_button">
+                            <i class="fa-regular fa-copy me-1"></i>
+                            Element kopieren
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal - Edit List -->
+    <div class="modal fade" id="editList" tabindex="-1" aria-labelledby="editListLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark border-0">
+                <div class="modal-header pb-0">
+                    <h5 class="modal-title" id="editListLabel">Liste bearbeiten</h5>
+                    <a class="close" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></a>
+                </div>
+                <div class="modal-footer border-0">
+                    <form method="post" class="w-100" enctype="multipart/form-data">
+
+                        <input type="hidden" name="list_id" id="list_id" value="{{ list.id }}">
+
+                        <div class="form-floating mb-3 w-100">
+                            <input type="text" class="form-control w-100" name="name"
+                                   placeholder="name@example.com" value="{{ list.name }}">
+                            <label for="floatingInput" class="text-dark">Wie soll die Liste heißen?</label>
+                        </div>
+
+                        <div class="form-floating w-100">
+                            <select class="form-select w-100" name="category">
+                                <option {% if list.category == "movies" %}selected{% endif %} value="movies">Filme</option>
+                                <option {% if list.category == "series" %}selected{% endif %} value="series">Serien/Shows</option>
+                                <option {% if list.category == "websites" %}selected{% endif %} value="websites">Webseiten</option>
+                                <option {% if list.category == "games" %}selected{% endif %} value="games">Spiele</option>
+                                <option {% if list.category == "other" %}selected{% endif %} value="other">Sonstiges</option>
+                            </select>
+                            <label for="floatingSelect" class="text-dark">Kategorie auswählen</label>
+                        </div>
+
+                        <div class="form-floating w-100 mt-3">
+                            <select class="form-select w-100" name="type"
+                                    aria-label="Floating label select example">
+                                <option {% if list.type == "list" %}selected{% endif %} value="list">Liste</option>
+                                <option {% if list.type == "block" %}selected{% endif %} value="block">Kacheln</option>
+                            </select>
+                            <label for="floatingSelect3" class="text-dark">Darstellung auswählen</label>
+                        </div>
+
+                        <div class="form-floating w-100 mt-3">
+                            <select class="form-select w-100" name="rate"
+                                    aria-label="Floating label select example">
+                                <option {% if list.rating == "stars" %}selected{% endif %} value="stars">6 Sterne</option>
+                                <option {% if list.rating == "like" %}selected{% endif %} value="like">Gefällt mir/ Gefällt mir nicht</option>
+                                <option {% if list.rating == "norating" %}selected{% endif %} value="norating">Keine Bewertung</option>
+                            </select>
+                            <label for="floatingSelect2" class="text-dark">Bewertung auswählen</label>
+                        </div>
+
+                        <div class="form-check mt-3" >
+                            <input class="form-check-input" type="checkbox" id="flexCheckDefaul2t" name="free" value="free" {% if not list.private %}checked{% endif %}>
+                            <label class="form-check-label" for="flexCheckDefaul2t" >
+                                Öffentliche Liste <i class="fa-regular fa-circle-question" style="margin-left:2px;"  data-bs-toggle="tooltip" data-bs-placement="top" data-toggle="tooltip" data-placement="left" title="Andere können Einträge bewerten oder hinzufügen"></i>
+                            </label>
+                        </div>
+
+                        <div class="form-check mt-1" >
+                            <input class="form-check-input" type="checkbox" id="fsadasdasdasdasd" name="showdate" value="yes" {% if list.showdate %}checked{% endif %}>
+                            <label class="form-check-label" for="fsadasdasdasdasd"  >
+                                "Datum" bei Elementen anzeigen <i class="fa-regular fa-circle-question" data-bs-toggle="tooltip" data-bs-placement="top"  data-toggle="tooltip" data-placement="left" title="Bei Kacheln nicht verfügbar."  style="margin-left:2px;"></i>
+                            </label>
+                        </div>
+
+                        <div class="form-check mt-1" >
+                            <input class="form-check-input" type="checkbox" id="sadsadasdasdasd" name="showinfo" value="yes" {% if list.showinfo %}checked{% endif %}>
+                            <label class="form-check-label" for="sadsadasdasdasd" >
+                                "Zusätzliche Info" bei Elementen anzeigen <i class="fa-regular fa-circle-question" data-bs-toggle="tooltip" data-bs-placement="top"  data-toggle="tooltip" data-placement="left" title="Bei Kacheln nicht verfügbar."  style="margin-left:2px;"></i>
+                            </label>
+                        </div>
+
+                        <a href="/deletelist/{{ list.id }}" class="mt-2 link-danger">Liste löschen</a>
+
+                        <button type="submit" class="btn btn-outline-light w-100 mt-3" id="create_list_button"><i
+                                    class="fa-solid fa-floppy-disk me-1"></i> Liste speichern
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal - Trailer -->
+    <div class="modal fade" id="showTrailer" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content bg-dark border-0">
+                <div class="modal-header pb-0"><div></div>
+                    <a class="close" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></a>
+                </div>
+                <div class="modal-footer border-0 pb-0" id="trailer">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                </div>
+                <div class="d-flex justify-content-center align-content-center mb-3 mt-2">
+                    {% if list.category == "movies" or list.category == "series" %}
+                        <a id="amazon" href="#" target="_blank" class="mx-2 "><img src="{{ asset('files/prime.png') }}" width="97px;" style="background-color: white;" class="p-1 rounded"></a>
+                        <a id="netflix" href="#" target="_blank" class="mx-2 "><img src="{{ asset('files/net.png') }}" width="88px;" style="background-color: white;" class="p-2 rounded"></a>
+                    {% endif %}
+                    {% if list.category == "games" %}
+                        <a id="steam" href="#" target="_blank" class="mx-2 "><img src="{{ asset('files/steam.svg') }}" width="97px;" style="background-color: white;" class="ps-3 pe-1 pt-1 pb-1 rounded"></a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

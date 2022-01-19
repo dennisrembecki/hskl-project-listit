@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Suchergebnisse <span class="text-muted">{{ keyword }}</span></h1>
+        {% for list in lists %}
+            {% if list.private != true or list.creator == app.user %}
+            <div class="d-flex">
+                <a class="list text-decoration-none link-light" href="{{ path('list_view', {id: list.id}) }}">
+                    <span class="list-start">{{ list.name|default(list.id) }}</span><span class="list-end">{{ list.category|category|raw }}</span>
+                </a>
+                <br>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div class="pb-5"></div>
+{% endblock %}

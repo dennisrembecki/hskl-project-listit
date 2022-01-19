@@ -1,0 +1,54 @@
+<nav class="navbar navbar-expand-lg navbar-dark mb-5 bg-dark">
+    <div class="container">
+        <a class="navbar-brand me-4" href="/">
+            <i class="fa-solid fa-clipboard-list" style="font-size:33px;padding-bottom: 10px;margin-right:4px;"></i>
+            LISTIT
+        </a>
+
+        <button class="navbar-toggler hamburger hamburger--squeeze" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+            </span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarScroll">
+            <ul class="navbar-nav me-auto mb-3 my-lg-0" style="--bs-scroll-height: 100px;">
+                <li class="nav-item mx-lg-2">
+                    <a class="nav-link {% if app.request.get('_route') == 'front' %}active{% endif %}"
+                       href="/"
+
+                    ><i class="fa-solid fa-house" ></i>Startseite</a>
+                </li>
+                <li class="nav-item mx-lg-2">
+                    <a class="nav-link {% if app.request.get('_route') == 'lists' %}active{% endif %}"
+
+                       {% if app.user %}href="/lists" {% else %}href="/login"{% endif %}><i
+                                class="fa-solid fa-table-list"      ></i>Meine Listen</a>
+                </li>
+                <li class="nav-item mx-lg-2">
+                    <a class="nav-link"
+                       {% if app.user %}href="#"  data-bs-toggle="modal" data-bs-target="#createModal" {% else %}href="/login"{% endif %}><i
+                                class="fa-solid fa-square-plus"></i>Liste erstellen</a>
+                </li>
+            </ul>
+            <form class="d-flex flex-wrap mb-lg-0 mb-2" id="search" method="post">
+                <input class="form-control me-2 mb-2" id="search_input_nav" type="search" aria-label="Search"
+                       placeholder="&#xf002 Suchbegriff eingeben" style="background-color: transparent;caret-color: grey;color:white;padding-right:8px;width: 211px;">
+                <button type="submit" class="btn btn-outline-light me-2 mb-2" type="submit" style="white-space: nowrap;">
+                    <i class="fa-solid fa-magnifying-glass me-1"></i> Suchen
+                </button>
+                {% if app.user %}
+                    <a class="btn btn-outline-light mb-2" href="/logout" title="Abmelden">
+                        <i class="fa-solid fa-right-from-bracket fa-flip-horizontal"></i> <i class="fa-solid fa-user"></i>
+                    </a>
+                {% else %}
+                    <a class="btn btn-outline-light mb-2" href="/login" title="Anmelden">
+                        <i class="fa-solid fa-user"></i> <i class="fa-solid fa-right-from-bracket"></i>
+                    </a>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</nav>
